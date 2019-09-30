@@ -8,6 +8,8 @@ const Tabs = ({
 }) => {
   const [activeTab, setActiveTab] = useState(defaultTab)
 
+  useEffect(() => console.log(activeTab))
+
   return (
     <TabContext.Provider value={{ activeTab, setActiveTab }}>
       <div
@@ -16,7 +18,6 @@ const Tabs = ({
         }
         style={{ ...style }}
       >
-        <h1>I am Tabs.</h1>
         {children}
       </div>
     </TabContext.Provider>
@@ -28,7 +29,17 @@ const TabsList = ({ children, className, style }) => {
   const { activeTab, setActiveTab } = useContext(TabContext)
 
   useEffect(() => {
-    // activeTab is invalid; default to tabIndex: 0
+    // activeTab is a string; find the matching tabIndex, else use tabIndex:0
+    if (isNaN(activeTab)) {
+      const tabIndex = Children.toArray(children).findIndex(child => child.props.name === activeTab)
+      if (tabIndex !== -1) {
+        return setActiveTab(tabIndex)
+      } else {
+        setActiveTab(0)
+      }
+    }
+
+    // activeTab is invalid; default to tabIndex:0
     if (!isNaN(activeTab) && activeTab > Children.toArray(children).length - 1) {
       setActiveTab(0)
     }
@@ -49,7 +60,7 @@ const TabsList = ({ children, className, style }) => {
 }
 
 const Tab = ({
-  children, className, label, name, style, tabIndex,
+  children, className, label, style, tabIndex, tabName,
 }) => {
   const { activeTab, setActiveTab } = useContext(TabContext)
 
@@ -66,7 +77,7 @@ const Tab = ({
       className={
         [
           'component-tab',
-          (activeTab === tabIndex ? 'active-tab' : undefined),
+          (activeTab === tabName || activeTab === tabIndex ? 'active-tab' : undefined),
           className
         ].filter(el => el != null).join(' ')
       }
