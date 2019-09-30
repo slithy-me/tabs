@@ -1,5 +1,5 @@
 import './style'
-import React, { Children, cloneElement, createContext, useContext, useState } from 'react'
+import React, { Children, cloneElement, createContext, useContext, useEffect, useState } from 'react'
 
 const TabContext = createContext()
 
@@ -25,6 +25,15 @@ const Tabs = ({
 
 
 const TabsList = ({ children, className, style }) => {
+  const { activeTab, setActiveTab } = useContext(TabContext)
+
+  useEffect(() => {
+    // activeTab is invalid; default to tabIndex: 0
+    if (!isNaN(activeTab) && activeTab > Children.toArray(children).length - 1) {
+      setActiveTab(0)
+    }
+  }, [activeTab])
+
   return (
     <ol
       className={
