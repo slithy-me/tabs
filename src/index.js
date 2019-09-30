@@ -8,8 +8,6 @@ const Tabs = ({
 }) => {
   const [activeTab, setActiveTab] = useState(defaultTab)
 
-  useEffect(() => console.log(activeTab))
-
   return (
     <TabContext.Provider value={{ activeTab, setActiveTab }}>
       <div
@@ -23,7 +21,6 @@ const Tabs = ({
     </TabContext.Provider>
   )
 }
-
 
 const TabsList = ({ children, className, style }) => {
   const { activeTab, setActiveTab } = useContext(TabContext)
