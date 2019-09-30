@@ -55,7 +55,11 @@ const Tab = ({
   return (
     <li
       className={
-        ['component-tab', className].filter(el => el != null).join(' ')
+        [
+          'component-tab',
+          (activeTab === tabIndex ? 'active-tab' : undefined),
+          className
+        ].filter(el => el != null).join(' ')
       }
       onClick={handleClick}
       style={{ ...style }}
