@@ -1,15 +1,36 @@
 import './style'
-import React, { Children, cloneElement, createContext, useContext, useEffect, useState } from 'react'
+import React, {
+  Children, cloneElement, createContext,
+  useContext, useEffect, useState,
+} from 'react'
+
+const useLocationHash = () => {
+  const removeLocationHash = () => {
+    var noHashURL = window.location.href.replace(/#.*$/, '');
+    window.history.replaceState('', document.title, noHashURL)
+  }
+
+  const hash = window.location.hash.replace(/#/, '')
+  const updateHash = (newHash) => newHash ? window.location.hash = `#${newHash}` : removeLocationHash()
+  return [hash, updateHash]
+}
 
 const TabContext = createContext()
 
 const Tabs = ({
-  children, className, defaultTab = 0, style,
+  children, className, defaultTab = 0, style, updateUrlHash,
 }) => {
   const [activeTab, setActiveTab] = useState(defaultTab)
+  const [hash] = useLocationHash()
+
+  useEffect(() => {
+    if (updateUrlHash && hash) {
+      setActiveTab(hash)
+    }
+  }, [])
 
   return (
-    <TabContext.Provider value={{ activeTab, setActiveTab }}>
+    <TabContext.Provider value={{ activeTab, setActiveTab, updateUrlHash }}>
       <div
         className={
           ['component-tabs', className].filter(el => el != null).join(' ')
@@ -24,11 +45,12 @@ const Tabs = ({
 
 const TabsList = ({ children, className, style }) => {
   const { activeTab, setActiveTab } = useContext(TabContext)
+  const [hash] = useLocationHash()
 
   useEffect(() => {
     // activeTab is a string; find the matching tabIndex, else use tabIndex:0
     if (isNaN(activeTab)) {
-      const tabIndex = Children.toArray(children).findIndex(child => child.props.name === activeTab)
+      const tabIndex = Children.toArray(children).findIndex(child => child.props.tabName === activeTab)
       if (tabIndex !== -1) {
         return setActiveTab(tabIndex)
       } else {
@@ -40,7 +62,7 @@ const TabsList = ({ children, className, style }) => {
     if (!isNaN(activeTab) && activeTab > Children.toArray(children).length - 1) {
       setActiveTab(0)
     }
-  }, [activeTab])
+  }, [activeTab, hash])
 
   return (
     <ol
@@ -59,9 +81,13 @@ const TabsList = ({ children, className, style }) => {
 const Tab = ({
   children, className, label, style, tabIndex, tabName,
 }) => {
-  const { activeTab, setActiveTab } = useContext(TabContext)
+  const { activeTab, setActiveTab, updateUrlHash } = useContext(TabContext)
+  const [, updateHash] = useLocationHash()
 
   const handleClick = e => {
+    if (updateUrlHash) {
+      updateHash(tabName)
+    }
     setActiveTab(tabIndex)
   }
 
@@ -106,7 +132,7 @@ const TabView = ({
 }) => {
   const { activeTab, setActiveTab } = useContext(TabContext)
 
-  if (activeTab === tabIndex) {
+  if (activeTab === forTab || activeTab === tabIndex) {
     return (
       <div
         className={

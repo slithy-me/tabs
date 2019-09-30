@@ -22,7 +22,7 @@ const App = () => (
       </TabsFrame>
     </Tabs>
 
-    <Tabs>
+    <Tabs updateUrlHash>
       <h1>I am Tabs w/ Name.</h1>
 
       <TabsList>
