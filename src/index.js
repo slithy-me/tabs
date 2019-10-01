@@ -3,6 +3,7 @@ import React, {
   Children, cloneElement, createContext,
   useContext, useEffect, useState,
 } from 'react'
+import PropTypes from 'prop-types'
 
 const useLocationHash = () => {
   const removeLocationHash = () => {
@@ -146,6 +147,39 @@ const TabView = ({
   }
 
   return null
+}
+
+Tabs.propTypes = {
+  className: PropTypes.string,
+  defaultTab: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string,
+  ]),
+  style: PropTypes.object,
+  updateUrlHash: PropTypes.bool,
+}
+
+TabsList.propTypes = {
+  className: PropTypes.string,
+  style: PropTypes.object,
+}
+
+Tab.propTypes = {
+  className: PropTypes.string,
+  label: PropTypes.string,
+  tabName: PropTypes.string,
+  style: PropTypes.object,
+}
+
+TabsFrame.propTypes = {
+  className: PropTypes.string,
+  style: PropTypes.object,
+}
+
+TabView.propTypes = {
+  className: PropTypes.string,
+  forTab: PropTypes.string,
+  style: PropTypes.object,
 }
 
 export { Tabs, TabsList, TabsFrame, Tab, TabView }
