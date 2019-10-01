@@ -39,11 +39,14 @@ const App = () => (
         <TabView forTab="tab2">
           <p>Suspendisse nec pellentesque ipsum. Duis at libero sed nulla varius volutpat eu quis risus. Sed eu porta nisl. Aenean vulputate metus egestas tortor dignissim, ut rutrum dolor volutpat. Cras quis egestas neque. Mauris nulla dui, facilisis quis iaculis eget, sodales et ligula. Sed sed lectus a metus pharetra laoreet volutpat a sem.</p>
         </TabView>
-        <TabView>
+        <TabView forTab="tab3">
           <p>Morbi commodo nulla in lacus gravida, id accumsan magna faucibus. Morbi eros purus, rutrum a aliquam tempus, laoreet at orci. Aliquam a nisi vel felis dignissim gravida. Morbi elit nunc, mattis non porta et, pellentesque sed lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In euismod sagittis mauris, sit amet luctus metus laoreet at. Aenean velit diam, bibendum sed ex et, pretium hendrerit nulla. Curabitur condimentum ut ante ac aliquam. In vel quam nec nibh fermentum tempus in sit amet neque. Aenean consequat commodo ipsum, ut tempor nunc. Donec vel gravida ligula, eget sollicitudin risus. Morbi varius diam quis ex tempor, et tempor turpis tincidunt. Suspendisse tempor felis tellus, quis tincidunt mauris elementum nec. Integer commodo massa nec ante eleifend facilisis. Nulla quis risus rhoncus, interdum est a, lacinia nibh. Praesent odio ante, lacinia tempor odio id, porta facilisis nulla.</p>
         </TabView>
         <TabView>
           <p>This tab has no name, and therefore REMOVES the URL hash.</p>
+        </TabView>
+        <TabView forTabs={['tab1', 'tab3']}>
+          <p>Here's an extra tab that should display with Tabs #1 and #3.</p>
         </TabView>
       </TabsFrame>
     </Tabs>

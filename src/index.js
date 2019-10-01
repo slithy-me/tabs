@@ -53,7 +53,7 @@ const TabsList = ({ children, className, style }) => {
     if (isNaN(activeTab)) {
       const tabIndex = Children.toArray(children).findIndex(child => child.props.tabName === activeTab)
       if (tabIndex !== -1) {
-        return setActiveTab(tabIndex)
+        return setActiveTab(activeTab)
       } else {
         setActiveTab(0)
       }
@@ -89,7 +89,11 @@ const Tab = ({
     if (updateUrlHash) {
       updateHash(tabName)
     }
-    setActiveTab(tabIndex)
+    if (tabName) {
+      setActiveTab(tabName)
+    } else {
+      setActiveTab(tabIndex)
+    }
   }
 
   if ( children.length === 0 && !label) {
@@ -129,11 +133,11 @@ const TabsFrame = ({ children, className, style }) => {
 }
 
 const TabView = ({
-  children, className, forTab, style, tabIndex,
+  children, className, forTab, forTabs, style, tabIndex,
 }) => {
   const { activeTab, setActiveTab } = useContext(TabContext)
 
-  if (activeTab === forTab || activeTab === tabIndex) {
+  if ((forTabs && forTabs.indexOf(activeTab) !== -1) || activeTab === forTab || activeTab === tabIndex) {
     return (
       <div
         className={
@@ -179,6 +183,7 @@ TabsFrame.propTypes = {
 TabView.propTypes = {
   className: PropTypes.string,
   forTab: PropTypes.string,
+  forTabs: PropTypes.array,
   style: PropTypes.object,
 }
 
