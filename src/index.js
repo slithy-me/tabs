@@ -5,38 +5,20 @@ import React, {
 } from 'react'
 import PropTypes from 'prop-types'
 
-const useLocationHash = () => {
-  const removeLocationHash = () => {
-    var noHashURL = window.location.href.replace(/#.*$/, '');
-    window.history.replaceState('', document.title, noHashURL)
-  }
-
-  const hash = window.location.hash.replace(/#/, '')
-  const updateHash = (newHash) => newHash ? window.location.hash = `#${newHash}` : removeLocationHash()
-  return [hash, updateHash]
-}
-
 const TabContext = createContext()
 
 const Tabs = ({
-  children, className, defaultTab = 0, style, updateUrlHash,
+  children, className, defaultTab = 0, ...props
 }) => {
   const [activeTab, setActiveTab] = useState(defaultTab)
-  const [hash] = useLocationHash()
-
-  useEffect(() => {
-    if (updateUrlHash && hash) {
-      setActiveTab(hash)
-    }
-  }, [])
 
   return (
-    <TabContext.Provider value={{ activeTab, setActiveTab, updateUrlHash }}>
+    <TabContext.Provider value={{ activeTab, setActiveTab }}>
       <div
         className={
           ['component-tabs', className].filter(el => el != null).join(' ')
         }
-        style={{ ...style }}
+        {...props}
       >
         {children}
       </div>
@@ -44,9 +26,8 @@ const Tabs = ({
   )
 }
 
-const TabsList = ({ children, className, style }) => {
+const TabsList = ({ children, className, ...props }) => {
   const { activeTab, setActiveTab } = useContext(TabContext)
-  const [hash] = useLocationHash()
 
   useEffect(() => {
     // activeTab is a string; find the matching tabIndex, else use tabIndex:0
@@ -55,22 +36,22 @@ const TabsList = ({ children, className, style }) => {
       if (tabIndex !== -1) {
         return setActiveTab(activeTab)
       } else {
-        setActiveTab(0)
+        return setActiveTab(0)
       }
     }
 
     // activeTab is invalid; default to tabIndex:0
     if (!isNaN(activeTab) && activeTab > Children.toArray(children).length - 1) {
-      setActiveTab(0)
+      return setActiveTab(0)
     }
-  }, [activeTab, hash])
+  }, [activeTab])
 
   return (
     <ol
       className={
         ['component-tabslist', className].filter(el => el != null).join(' ')
       }
-      style={{ ...style }}
+      {...props}
     >
       {Children.toArray(children).map((child, i) => cloneElement(child, {
         tabIndex: i,
@@ -80,15 +61,11 @@ const TabsList = ({ children, className, style }) => {
 }
 
 const Tab = ({
-  children, className, label, style, tabIndex, tabName,
+  children, className, label, tabIndex, tabName, ...props
 }) => {
-  const { activeTab, setActiveTab, updateUrlHash } = useContext(TabContext)
-  const [, updateHash] = useLocationHash()
+  const { activeTab, setActiveTab } = useContext(TabContext)
 
   const handleClick = e => {
-    if (updateUrlHash) {
-      updateHash(tabName)
-    }
     if (tabName) {
       setActiveTab(tabName)
     } else {
@@ -110,20 +87,20 @@ const Tab = ({
         ].filter(el => el != null).join(' ')
       }
       onClick={handleClick}
-      style={{ ...style }}
+      {...props}
     >
       {label || children}
     </li>
   )
 }
 
-const TabsFrame = ({ children, className, style }) => {
+const TabsFrame = ({ children, className, ...props }) => {
   return (
     <div
       className={
         ['component-tabs-frame', className].filter(el => el != null).join(' ')
       }
-      style={{ ...style }}
+      {...props}
     >
       {Children.toArray(children).map((child, i) => cloneElement(child, {
         tabIndex: i,
@@ -133,9 +110,9 @@ const TabsFrame = ({ children, className, style }) => {
 }
 
 const TabView = ({
-  children, className, forTab, forTabs, style, tabIndex,
+  children, className, forTab, forTabs, tabIndex, ...props
 }) => {
-  const { activeTab, setActiveTab } = useContext(TabContext)
+  const { activeTab } = useContext(TabContext)
 
   if ((forTabs && forTabs.indexOf(activeTab) !== -1) || activeTab === forTab || activeTab === tabIndex) {
     return (
@@ -143,7 +120,7 @@ const TabView = ({
         className={
           ['component-tab-view', className].filter(el => el != null).join(' ')
         }
-        style={{ ...style }}
+        {...props}
       >
         {children}
       </div>
@@ -159,32 +136,26 @@ Tabs.propTypes = {
     PropTypes.number,
     PropTypes.string,
   ]),
-  style: PropTypes.object,
-  updateUrlHash: PropTypes.bool,
 }
 
 TabsList.propTypes = {
   className: PropTypes.string,
-  style: PropTypes.object,
 }
 
 Tab.propTypes = {
   className: PropTypes.string,
   label: PropTypes.string,
   tabName: PropTypes.string,
-  style: PropTypes.object,
 }
 
 TabsFrame.propTypes = {
   className: PropTypes.string,
-  style: PropTypes.object,
 }
 
 TabView.propTypes = {
   className: PropTypes.string,
   forTab: PropTypes.string,
   forTabs: PropTypes.array,
-  style: PropTypes.object,
 }
 
 export { Tabs, TabsList, TabsFrame, Tab, TabView }
