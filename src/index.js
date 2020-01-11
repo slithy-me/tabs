@@ -73,7 +73,7 @@ const Tab = ({
     }
   }
 
-  if ( children.length === 0 && !label) {
+  if ((children && children.length === 0) && !label) {
     return null
   }
 
